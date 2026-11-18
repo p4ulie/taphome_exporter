@@ -27,3 +27,30 @@ mise run exporter                  # local
 mise run image:build               # taphome-exporter:dev
 docker run -p 9878:9878 --env-file .env taphome-exporter:dev
 ```
+
+## Helm chart
+
+```sh
+helm install taphome helm/taphome-exporter --set taphome.url=http://192.0.2.1/api/TapHomeApi/v1 --set taphome.tokenSecret.name=taphome-token
+```
+
+| Value | Default | Meaning |
+|---|---|---|
+| `image.repository` | `10.34.1.1:30095/taphome-exporter` | Image to run |
+| `image.tag` | `""` | Empty means the chart's `appVersion` |
+| `taphome.url` | none | Required |
+| `taphome.tokenSecret.name`, `.key` | none, `api-token` | Required existing Secret holding the token; the chart creates none |
+| `taphome.interval` | `30` | Poll interval in seconds |
+| `resources` | 10m CPU, 32Mi request, 96Mi limit | Pod resources |
+| `serviceMonitor.enabled`, `.interval` | `false`, `30s` | Prometheus Operator scrape config |
+| `prometheusRule.enabled` | `false` | Alerts: unreachable, stale, contact open, room temperature, humidity |
+| `alerts.contactOpenFor`, `.roomTempMin`, `.roomTempMax`, `.humidityMax` | `30m`, `17`, `28`, `0.7` | Alert thresholds (humidity is a fraction) |
+| `dashboard.enabled`, `.labels`, `.annotations` | `false` | One Grafana dashboard ConfigMap each for climate and lights/security |
+
+The chart installs no CRDs. The ServiceMonitor and PrometheusRule need prometheus-operator, the dashboards need the Grafana sidecar.
+
+## Release
+
+1. Bump `version` and `appVersion` in `helm/taphome-exporter/Chart.yaml` (same value), commit, tag `v<version>`, push.
+2. `mise run image:push` builds and pushes `${REGISTRY:-10.34.1.1:30095}/taphome-exporter:<version>`, with the version read from `Chart.yaml`.
+3. Point the Argo CD Application at the tag.

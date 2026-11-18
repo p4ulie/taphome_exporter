@@ -1,0 +1,22 @@
+{{- if .Values.dashboard.enabled }}
+{{- range $path, $_ := .Files.Glob "dashboards/*.json" }}
+{{- $file := base $path }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Chart.Name }}-{{ trimSuffix ".json" $file }}
+  labels:
+    {{- include "taphome-exporter.labels" $ | nindent 4 }}
+    {{- with $.Values.dashboard.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $.Values.dashboard.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{ $file }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: taphome-exporter
+description: Read-only Prometheus exporter for a TapHome Core
+version: 0.1.0
+appVersion: "0.1.0"

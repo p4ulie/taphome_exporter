@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "taphome-exporter.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "taphome-exporter.selector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "taphome-exporter.labels" . | nindent 8 }}
+    spec:
+      # Kubernetes injects <SERVICE>_PORT for every Service; ours is named taphome-exporter, so without this the pod
+      # gets TAPHOME_EXPORTER_PORT=tcp://<ip>:9878 and the exporter cannot parse its own port.
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+            - name: TAPHOME_URL
+              value: {{ required "taphome.url is required" .Values.taphome.url | quote }}
+            - name: TAPHOME_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "taphome.tokenSecret.name is required" .Values.taphome.tokenSecret.name | quote }}
+                  key: {{ .Values.taphome.tokenSecret.key | quote }}
+            - name: TAPHOME_INTERVAL
+              value: {{ .Values.taphome.interval | quote }}
+          ports:
+            - name: metrics
+              containerPort: 9878
+          readinessProbe:
+            tcpSocket:
+              port: metrics
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

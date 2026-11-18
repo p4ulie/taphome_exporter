@@ -1,0 +1,49 @@
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "taphome-exporter.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: taphome
+      rules:
+        - alert: TapHomeUnreachable
+          expr: taphome_up == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: The TapHome Core has not answered for 15 minutes.
+        - alert: TapHomeStale
+          expr: time() - taphome_last_success_timestamp_seconds > 600
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: The TapHome exporter has no successful read for over 10 minutes, so its read loop may have stalled.
+        - alert: TapHomeContactOpen
+          # Motion sensors are reed-type devices too, but they pulse, so they are excluded.
+          expr: taphome_reed_contact{usage!="MotionSensor"} == 1
+          for: {{ .Values.alerts.contactOpenFor }}
+          labels:
+            severity: warning
+          annotations:
+            summary: "A contact ({{`{{ $labels.name }}`}}) has been open for {{ .Values.alerts.contactOpenFor }}."
+        - alert: TapHomeRoomTemperature
+          # The usage filter leaves out thermostats, which repeat the room sensors.
+          expr: taphome_temperature_celsius{usage="AirTemperature"} < {{ .Values.alerts.roomTempMin }} or taphome_temperature_celsius{usage="AirTemperature"} > {{ .Values.alerts.roomTempMax }}
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Room temperature ({{`{{ $labels.name }}`}}) is outside {{ .Values.alerts.roomTempMin }}-{{ .Values.alerts.roomTempMax }} C."
+        - alert: TapHomeHumidityHigh
+          expr: taphome_humidity_ratio{usage="AirTemperature"} > {{ .Values.alerts.humidityMax }}
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "Humidity ({{`{{ $labels.name }}`}}) is above {{ .Values.alerts.humidityMax }} (fraction)."
+{{- end }}
