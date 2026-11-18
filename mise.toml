@@ -1,0 +1,28 @@
+[tools]
+python = "3.12"
+uv = "latest"
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+_.file = { path = ".env", tools = true }  # Core URL and token, git-ignored; see .env.example
+
+[tasks.install]
+run = "uv pip install -r requirements.txt -r requirements-dev.txt"
+
+[tasks.test]
+run = "uv run --with-requirements requirements.txt --with-requirements requirements-dev.txt --with pyyaml python -m pytest -q tests/"
+
+[tasks.exporter]
+run = "python -m taphome_exporter.exporter"
+
+[tasks."image:build"]
+run = "docker build -t taphome-exporter:dev ."
+
+# Version comes from Chart.yaml so there is one place to bump it.
+[tasks."image:push"]
+run = '''
+registry=${REGISTRY:-10.34.1.1:30095}
+v=$(sed -n 's/^version: *//p' helm/taphome-exporter/Chart.yaml | tr -d '"')
+[ -n "$v" ] || { echo "no version: in helm/taphome-exporter/Chart.yaml" >&2; exit 1; }
+docker build -t "$registry/taphome-exporter:$v" . && docker push "$registry/taphome-exporter:$v"
+'''

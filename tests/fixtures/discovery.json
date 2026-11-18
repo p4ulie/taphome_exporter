@@ -1,0 +1,8 @@
+{"devices": [
+ {"deviceId": 1, "type": "SensorType1", "usage": "AirTemperature", "name": "Sensor 1", "description": "Sensor 1", "zone": "Room A", "category": "Climate",
+  "supportedValues": [{"valueTypeId": 3, "valueTypeName": "Humidity", "readOnly": true}, {"valueTypeId": 5, "valueTypeName": "RealTemperature", "readOnly": true}, {"valueTypeId": 7, "valueTypeName": "DeviceStatus", "readOnly": true}]},
+ {"deviceId": 2, "type": "ThermostatType1", "usage": "Thermostat", "name": "Thermostat 1", "description": "Thermostat 1", "zone": "Room A",
+  "supportedValues": [{"valueTypeId": 9, "valueTypeName": "TemperatureSetPoint", "readOnly": false}]},
+ {"deviceId": 3, "type": "SwitchType1", "name": "Switch 1", "description": "Switch 1",
+  "supportedValues": [{"valueTypeId": 1, "valueTypeName": "SwitchState", "readOnly": false}]}
+], "timestamp": 1700000000}
