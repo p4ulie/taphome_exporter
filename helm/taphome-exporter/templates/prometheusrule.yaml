@@ -17,7 +17,7 @@ spec:
           annotations:
             summary: The TapHome Core has not answered for 15 minutes.
         - alert: TapHomeStale
-          expr: time() - taphome_last_success_timestamp_seconds > 600
+          expr: time() - taphome_last_success_timestamp_seconds > 600 and taphome_up == 1
           for: 5m
           labels:
             severity: warning

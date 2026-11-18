@@ -85,7 +85,7 @@ def test_all_toggles():
     rules = rules_of(docs)
     assert {n: (r["expr"], r["for"]) for n, r in rules.items()} == {
         "TapHomeUnreachable": ("taphome_up == 0", "15m"),
-        "TapHomeStale": ("time() - taphome_last_success_timestamp_seconds > 600", "5m"),
+        "TapHomeStale": ("time() - taphome_last_success_timestamp_seconds > 600 and taphome_up == 1", "5m"),
         "TapHomeContactOpen": ('taphome_reed_contact{usage!="MotionSensor"} == 1', "30m"),
         "TapHomeRoomTemperature": (
             'taphome_temperature_celsius{usage="AirTemperature"} < 17'

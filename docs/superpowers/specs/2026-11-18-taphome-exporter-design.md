@@ -62,7 +62,7 @@ existing Secret (`taphome.tokenSecret.name` required, `.key` default `api-token`
 ## Alerts (group `taphome`, all `severity: warning`)
 
 - `TapHomeUnreachable`: `taphome_up == 0` for 15m.
-- `TapHomeStale`: `time() - taphome_last_success_timestamp_seconds > 600` for 5m.
+- `TapHomeStale`: `time() - taphome_last_success_timestamp_seconds > 600 and taphome_up == 1` for 5m (a down Core is Unreachable).
 - `TapHomeContactOpen`: `taphome_reed_contact{usage!="MotionSensor"} == 1` for 30m (default; motion sensors are
   reed-type devices but pulse, so they are excluded).
 - `TapHomeRoomTemperature`: `taphome_temperature_celsius{usage="AirTemperature"}` outside 17–28 for 30m

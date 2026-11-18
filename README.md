@@ -2,7 +2,7 @@
 
 Read-only Prometheus exporter for a TapHome Core. It only calls `GET discovery` and `GET getAllDevicesValues`; it never writes.
 
-A background thread polls the Core every `TAPHOME_INTERVAL` seconds (default 30) and serves `:9878/metrics`
+A background thread polls the Core every `TAPHOME_INTERVAL` seconds (default 30, minimum 1) and serves `:9878/metrics`
 (`TAPHOME_EXPORTER_PORT`). A scrape only formats the last result and never touches the network.
 
 Config: `cp .env.example .env` and set `TAPHOME_URL` (e.g. `http://<core>/api/TapHomeApi/v1`) and `TAPHOME_TOKEN`.
