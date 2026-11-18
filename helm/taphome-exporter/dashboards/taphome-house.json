@@ -179,7 +179,7 @@
     {
       "id": 5,
       "type": "timeseries",
-      "title": "Dimmers",
+      "title": "Dimmers (level set)",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -197,7 +197,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "taphome_analog_output_value",
+          "expr": "taphome_analog_output_desired_value",
           "legendFormat": "{{zone}} {{name}}"
         }
       ],
@@ -206,7 +206,7 @@
           "color": {
             "mode": "palette-classic"
           },
-          "unit": "percentunit",
+          "unit": "percent",
           "thresholds": {
             "mode": "absolute",
             "steps": [

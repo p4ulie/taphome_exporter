@@ -286,7 +286,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "taphome_setpoint_celsius{type=\"VirtualThermostatDummy\"}",
+          "expr": "taphome_setpoint_celsius",
           "legendFormat": "{{name}} setpoint"
         },
         {
@@ -295,7 +295,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "taphome_temperature_celsius{type=\"VirtualThermostatDummy\"}",
+          "expr": "taphome_temperature_celsius and on(device_id) taphome_setpoint_celsius",
           "legendFormat": "{{name}} actual"
         }
       ],

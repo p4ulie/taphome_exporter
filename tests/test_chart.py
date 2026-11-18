@@ -94,7 +94,7 @@ def test_all_toggles():
     }
     assert all(r["labels"]["severity"] == "warning" for r in rules.values())
 
-    cms = {c["data"].keys().__iter__().__next__(): c for c in all_docs if c["kind"] == "ConfigMap"}
+    cms = {next(iter(c["data"])): c for c in all_docs if c["kind"] == "ConfigMap"}
     assert set(cms) == {"taphome-climate.json", "taphome-house.json"}
     for name, cm in cms.items():
         assert cm["metadata"]["labels"]["grafana_dashboard"] == "1"
@@ -139,3 +139,6 @@ def test_metrics_exist():
                 assert t["datasource"]["uid"] == "prometheus"
                 used = set(re.findall(r"taphome_[a-z_]+", t["expr"]))
                 assert used and used <= KNOWN, used - KNOWN
+                # empty legend = exporter-health panel without labels
+                legend = t["legendFormat"]
+                assert not legend or "{{name}}" in legend or "{{zone}}" in legend, legend
