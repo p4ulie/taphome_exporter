@@ -45,7 +45,7 @@ helm install taphome helm/taphome-exporter --set taphome.url=http://192.0.2.1/ap
 | `serviceMonitor.enabled`, `.interval` | `false`, `30s` | Prometheus Operator scrape config |
 | `prometheusRule.enabled` | `false` | Alerts: unreachable, stale, contact open, room temperature, humidity |
 | `alerts.contactOpenFor`, `.roomTempMin`, `.roomTempMax`, `.humidityMax` | `30m`, `17`, `28`, `0.7` | Alert thresholds (humidity is a fraction) |
-| `dashboard.enabled`, `.labels`, `.annotations` | `false` | One Grafana dashboard ConfigMap each for climate and lights/security |
+| `dashboard.enabled`, `.labels`, `.annotations` | `false` | One Grafana dashboard ConfigMap each for climate, lights and security |
 
 The chart installs no CRDs. The ServiceMonitor and PrometheusRule need prometheus-operator, the dashboards need the Grafana sidecar.
 

@@ -1,11 +1,10 @@
 {
-  "uid": "taphome-house",
-  "title": "Home / TapHome lights and security",
+  "uid": "taphome-security",
+  "title": "TapHome security",
   "tags": [
     "home",
     "taphome",
-    "security",
-    "lights"
+    "security"
   ],
   "timezone": "browser",
   "schemaVersion": 42,
@@ -101,7 +100,7 @@
     {
       "id": 3,
       "type": "row",
-      "title": "Lights",
+      "title": "Devices",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -114,140 +113,6 @@
     {
       "id": 4,
       "type": "state-timeline",
-      "title": "Lights",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 10,
-        "w": 12,
-        "h": 9
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "taphome_switch_state{usage=~\"Light.*\"}",
-          "legendFormat": "{{zone}} {{name}}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "Off",
-                  "color": "text"
-                },
-                "1": {
-                  "text": "On",
-                  "color": "green"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      },
-      "options": {
-        "showValue": "never",
-        "mergeValues": true,
-        "legend": {
-          "showLegend": false
-        }
-      }
-    },
-    {
-      "id": 5,
-      "type": "timeseries",
-      "title": "Dimmers (level set)",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "x": 12,
-        "y": 10,
-        "w": 12,
-        "h": 9
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "taphome_analog_output_desired_value",
-          "legendFormat": "{{zone}} {{name}}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "percent",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "tooltip": {
-          "mode": "multi"
-        }
-      }
-    },
-    {
-      "id": 6,
-      "type": "row",
-      "title": "Devices",
-      "collapsed": false,
-      "gridPos": {
-        "x": 0,
-        "y": 19,
-        "w": 24,
-        "h": 1
-      },
-      "panels": []
-    },
-    {
-      "id": 7,
-      "type": "state-timeline",
       "title": "Devices with a status other than 0",
       "datasource": {
         "type": "prometheus",
@@ -255,7 +120,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 20,
+        "y": 10,
         "w": 24,
         "h": 6
       },
@@ -296,20 +161,20 @@
       }
     },
     {
-      "id": 8,
+      "id": 5,
       "type": "row",
       "title": "Exporter",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 26,
+        "y": 16,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 9,
+      "id": 6,
       "type": "stat",
       "title": "Core reachable",
       "datasource": {
@@ -318,7 +183,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 27,
+        "y": 17,
         "w": 6,
         "h": 4
       },
@@ -383,7 +248,7 @@
       }
     },
     {
-      "id": 10,
+      "id": 7,
       "type": "stat",
       "title": "Last poll age",
       "datasource": {
@@ -392,7 +257,7 @@
       },
       "gridPos": {
         "x": 6,
-        "y": 27,
+        "y": 17,
         "w": 6,
         "h": 4
       },
@@ -447,7 +312,7 @@
       }
     },
     {
-      "id": 11,
+      "id": 8,
       "type": "timeseries",
       "title": "Poll duration",
       "datasource": {
@@ -456,7 +321,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 27,
+        "y": 17,
         "w": 6,
         "h": 4
       },
@@ -503,7 +368,7 @@
       }
     },
     {
-      "id": 12,
+      "id": 9,
       "type": "timeseries",
       "title": "Poll errors",
       "datasource": {
@@ -512,7 +377,7 @@
       },
       "gridPos": {
         "x": 18,
-        "y": 27,
+        "y": 17,
         "w": 6,
         "h": 4
       },

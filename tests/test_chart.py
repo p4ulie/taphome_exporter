@@ -96,7 +96,7 @@ def test_all_toggles():
     assert all(r["labels"]["severity"] == "warning" for r in rules.values())
 
     cms = {next(iter(c["data"])): c for c in all_docs if c["kind"] == "ConfigMap"}
-    assert set(cms) == {"taphome-climate.json", "taphome-house.json"}
+    assert set(cms) == {"taphome-climate.json", "taphome-lights.json", "taphome-security.json"}
     for name, cm in cms.items():
         assert cm["metadata"]["labels"]["grafana_dashboard"] == "1"
         assert cm["metadata"]["annotations"]["grafana_folder"] == "Home"
@@ -128,12 +128,14 @@ def test_metrics_exist():
     docs = render(*REQUIRED, "--set", "prometheusRule.enabled=true")
     used = set(re.findall(r"taphome_[a-z_]+", json.dumps(docs["PrometheusRule"])))
     assert used and used <= KNOWN, used - KNOWN
-    for uid in ("taphome-climate", "taphome-house"):
+    for uid in ("taphome-climate", "taphome-lights", "taphome-security"):
         with open(f"{CHART}/dashboards/{uid}.json") as f:
             dash = json.load(f)
         assert dash["uid"] == uid and dash["editable"] is False
+        # the Grafana folder already says Home; a "Home / " title prefix only repeats it
+        assert not dash["title"].startswith("Home /"), dash["title"]
         panels = [p for p in dash["panels"] if p["type"] != "row"]
-        assert len(panels) >= 6
+        assert len(panels) >= 2  # the lights dashboard has two: on/off and dimmer level
         for p in panels:
             assert p["datasource"] == {"type": "prometheus", "uid": "prometheus"}
             for t in p["targets"]:

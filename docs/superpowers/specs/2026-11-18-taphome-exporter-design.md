@@ -72,12 +72,14 @@ existing Secret (`taphome.tokenSecret.name` required, `.key` default `api-token`
 
 ## Dashboards (in the chart, `helm/taphome-exporter/dashboards/`, one ConfigMap each)
 
-- `taphome-climate.json`, uid `taphome-climate`, "Home / TapHome climate": now-row (temperature and humidity per
+- `taphome-climate.json`, uid `taphome-climate`, "TapHome climate": now-row (temperature and humidity per
   room), temperatures over time, humidity over time, thermostat setpoint vs actual, heating and cooling valves as
   state timelines.
-- `taphome-house.json`, uid `taphome-house`, "Home / TapHome lights and security": security contacts (state
-  timeline), lights and dimmers on/off timeline, devices with `device_status != 0`, exporter health (up, last poll
-  age, poll duration, errors).
+- `taphome-lights.json`, uid `taphome-lights`, "TapHome lights": lights on/off timeline, dimmer level set.
+- `taphome-security.json`, uid `taphome-security`, "TapHome security": security contacts (state timeline),
+  devices with `device_status != 0`, exporter health (up, last poll age, poll duration, errors).
+- Titles carry no "Home / " prefix: the Grafana folder (annotation `grafana_folder: Home`) already says it
+  (owner, 2026-11-18; lights and security were split into two dashboards the same day).
 - Datasource uid `prometheus`, not editable; panels use `{{name}}` / `{{zone}}` legends so new devices appear.
 
 ## homenet_2.0 side (after the repo is on GitHub and tagged)
