@@ -7,7 +7,7 @@ import pytest
 from prometheus_client import CollectorRegistry, generate_latest
 
 from taphome_exporter import exporter
-from taphome_exporter.exporter import State, TapHomeCollector, metric_name, poll_once
+from taphome_exporter.exporter import State, TapHomeCollector, metric_name, poll_interval, poll_once
 
 FIX = Path(__file__).parent / "fixtures"
 DISCOVERY = json.loads((FIX / "discovery.json").read_text())
@@ -104,3 +104,51 @@ def test_missing_env_exits(monkeypatch):
     monkeypatch.delenv("TAPHOME_TOKEN", raising=False)
     with pytest.raises(SystemExit):
         exporter.main()
+
+
+def fetch_with(discovery=DISCOVERY, values=VALUES):
+    return lambda url, token, endpoint, timeout=10: {"discovery": discovery, "getAllDevicesValues": values}[endpoint]
+
+
+def values_with(value_type):
+    return {"devices": [{"deviceId": 1, "values": [{"valueTypeName": value_type, "value": 1}]}]}
+
+
+@pytest.mark.parametrize("discovery,values", [
+    ([], VALUES),
+    (DISCOVERY, []),
+    ({"devices": [{}]}, VALUES),  # device without deviceId
+    (DISCOVERY, {"devices": [{}]}),
+    (DISCOVERY, {"devices": [{"deviceId": 1, "values": [{"value": 1}]}]}),  # no valueTypeName
+])
+def test_malformed_reply_is_a_failed_poll(caplog, discovery, values):
+    state = State()
+    with caplog.at_level(logging.WARNING):
+        poll_once(state, "u", TOKEN, fetch=fetch_with(discovery, values))
+    out = render(state)  # the scrape still answers
+    assert "taphome_up 0.0" in out
+    assert "taphome_read_errors_total 1.0" in out
+    assert "poll failed" in caplog.text
+
+
+@pytest.mark.parametrize("bad", ["Devices", "ReadErrors", "Bad Name", "Wh/h"])
+def test_unusable_value_type_is_skipped(caplog, bad):
+    values = {"devices": [{"deviceId": 1, "values": [
+        {"valueTypeName": bad, "value": 1}, {"valueTypeName": "BlindsLevel", "value": 2}]}]}
+    state = State()
+    with caplog.at_level(logging.WARNING):
+        poll_once(state, "u", TOKEN, fetch=fetch_with(values=values))
+    out = render(state)
+    assert "taphome_up 1.0" in out
+    assert "taphome_blinds_level{" in out
+    assert "taphome_devices 3.0" in out  # the fixed metric is not clobbered
+    assert bad in caplog.text
+
+
+def test_interval_clamped_to_one_second(monkeypatch):
+    monkeypatch.setenv("TAPHOME_INTERVAL", "0")
+    assert poll_interval() == 1
+    monkeypatch.setenv("TAPHOME_INTERVAL", "45")
+    assert poll_interval() == 45
+    monkeypatch.delenv("TAPHOME_INTERVAL")
+    assert poll_interval() == 30
