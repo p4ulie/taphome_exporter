@@ -53,8 +53,9 @@ def test_defaults_render_only_workload():
     }
     c = pod["containers"][0]
     chart = yaml.safe_load(open(f"{CHART}/Chart.yaml"))
-    assert chart["version"] == chart["appVersion"] == "0.1.0"
-    assert c["image"] == "10.34.1.1:30095/taphome-exporter:0.1.0"
+    # one version for chart, app and image tag; the release bumps it, so the test does not pin it
+    assert chart["version"] == chart["appVersion"]
+    assert c["image"] == f"10.34.1.1:30095/taphome-exporter:{chart['appVersion']}"
     env = {e["name"]: e for e in c["env"]}
     assert set(env) == {"TAPHOME_URL", "TAPHOME_TOKEN", "TAPHOME_INTERVAL"}
     assert env["TAPHOME_TOKEN"]["valueFrom"]["secretKeyRef"] == {"name": "taphome-token", "key": "api-token"}
