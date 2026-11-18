@@ -31,7 +31,7 @@
 
 ### Task 1: Exporter, image and repo scaffolding
 
-**Files:** create `taphome_exporter/{__init__,api,exporter}.py`, `tests/test_exporter.py`, `tests/fixtures/{discovery,values}.json`, `requirements.txt` (`prometheus-client`), `requirements-dev.txt` (`pytest`), `mise.toml` (tasks `test`, `exporter`, `image:build`, `image:push` reading `helm/taphome-exporter/Chart.yaml`), `Dockerfile`, `.dockerignore`, `.gitignore`, `.env.example`, `README.md`, `LICENSE` (MIT, Pavol Antalík, 2026).
+**Files:** create `taphome_exporter/{__init__,api,exporter}.py`, `tests/test_exporter.py`, `tests/fixtures/{discovery,values}.json`, `requirements.txt` (`prometheus-client`), `requirements-dev.txt` (`pytest`), `mise.toml` (tasks `test`, `exporter`, `image:build`, `image:push` reading `helm/taphome-exporter/Chart.yaml`), `Dockerfile`, `.dockerignore`, `.gitignore`, `.env.example`, `README.md`, `LICENSE` (MIT, Pavol Antalik, 2026).
 
 **Interfaces:**
 - `api.fetch(url: str, token: str, endpoint: str, timeout: float = 10) -> dict` (raises on HTTP error / timeout).
